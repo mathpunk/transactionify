@@ -1,13 +1,13 @@
 ---
-title: Welcome
+title: Welcome to Transactionify!
 category:
   uri: getting-started
 content:
-  excerpt: Welcome to Transactionify API
+  excerpt: Welcome to the Transactionify API
 ---
 
 <Callout icon="fa-exclamation" theme="warning">
-  **Release Blocked:** The following issues must be addressed before releasing this API to external users:
+  **CRITICAL ISSUES:** The following issues must be addressed before releasing this API to external users:
 
   1. **OpenAPI Specification Discrepancies** - Response schemas for 2 endpoints do not match actual API behavior
   2. **Failing Unit Tests** - 6 tests fail due to pagination function rename (breaking change)
@@ -15,7 +15,10 @@ content:
   4. **Amount Validation Gap** - API accepts non-numeric strings like "not-a-number" for payment amounts
   5. **Rate Limiting Unspecified** - No documentation on rate limits; testing shows >5000 concurrent requests succeed
 
-  See ISSUES.md in repository for full details, reproduction steps, and recommended actions.
+  **SERIOUS ISSUES:** 
+
+  **FURTHER INFORMATION:**
+  See ISSUES.md in the repository for full details, reproduction steps, and recommended actions.
 </Callout>
 
 <Cards>

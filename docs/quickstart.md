@@ -12,45 +12,40 @@ This guide shows you how to make your first successful API call to the Transacti
 
 ## Prerequisites
 
-- **API Key**: Contact your administrator to obtain an API key
-- **Base URL**: `https://gj7edrv1il.execute-api.us-east-1.amazonaws.com`
+- **API Key**: You'll need an API key. Your customer service representative at LoanPro can help you get one if you don't have one already. 
+- **Any program that can send HTTP requests**: In these examples, we'll be using the command line tool `curl`, but you can use any HTTP client for your favorite language.
 
-## Authenticating
+## Verifying your setup
 
-If you send a simple GET request to the API endpoint without credentials, like so:
+If you're new to using APIs, it can be useful to verify that you're using the tool you've chosen to connect with our API successfully. We'll start by trying to get the balance of a non-existent account:
 
 ```bash
-curl https://gj7edrv1il.execute-api.us-east-1.amazonaws.com/api/v1/accounts/00000000-0000-0000-0000-000000000000/balance
+curl https://gj7edrv1il.execute-api.us-east-1.amazonaws.com/api/v1/accounts/0000/balance
 ```
 
-You'll receive a `403 Forbidden` error:
+There's no user with an ID of `0000`, but that's okay for testing the connection. This command will return `{"message":"Unauthorized"}` (also known as HTTP status 401), which shows that the server is not letting you get any data. And that's expected! We haven't included your authentication credentials. If you get something like `Could not resolve host`, or another error, then check the URL you're using, or read the documentation for the HTTP client you've chosen. 
 
-```json
-{
-  "message": "Forbidden"
-}
-```
+## Testing Authentication
 
-To verify that you've set up your API key correctly, include it in the Authorization header:
+Let's try and get information for a fake account again, but this time, we'll include the secret API key in the Authorization header:
 
 ```bash
 curl -H "Authorization: APIKey YOUR_API_KEY_HERE" \
-  https://gj7edrv1il.execute-api.us-east-1.amazonaws.com/api/v1/accounts/00000000-0000-0000-0000-000000000000/balance
+  https://gj7edrv1il.execute-api.us-east-1.amazonaws.com/api/v1/accounts/0000/balance
 ```
-
-You'll receive a `404 Not Found` error instead:
+which will yield 
 
 ```json
 {
   "message": "Account not found"
 }
 ```
+We knew there wouldn't be an account, because it's a fake number. But this time, the API is willing to tell us, because we've proven we're allowed access to that data (or maybe we should say, the lack of that data). 
 
-This confirms your API key is valid! The `404` means the account doesn't exist, but authentication succeeded.
 
 ## Creating Your First Account
 
-To create your first customer account, send a POST request with your desired currency (USD, EUR, or GBP):
+That was all just preamble to doing some real work. Let's create your first customer account. Now we'll send a POST request. You must include your desired currency; Transactionify can handle US dollars (USD), euro (EUR), or British pounds (GBP) only: 
 
 ```bash
 curl -X POST https://gj7edrv1il.execute-api.us-east-1.amazonaws.com/api/v1/accounts \
@@ -68,14 +63,18 @@ curl -X POST https://gj7edrv1il.execute-api.us-east-1.amazonaws.com/api/v1/accou
 }
 ```
 
-Congratulations! You've created your first account. Save the `id` value—you'll need it to create payments, check balances, and list transactions.
+Congratulations! You've created your first account. 
+
+IMPORTANT: You are responsible for holding onto the `id` value. You'll need it to create payments, check balances, and list transactions.
+
 
 ## Next Steps
 
-Now that you have an account, you can:
+Now that you have created a user's account, you can:
 
-- **Create payments**: [createPayment](https://transactionify-th.readme.io/reference/createpayment)
-- **Check balances**: [getBalance](https://transactionify-th.readme.io/reference/getbalance)
-- **List transactions**: [listTransactions](https://transactionify-th.readme.io/reference/listtransactions)
-- **Handle errors**: See the [Error Catalog](https://transactionify-th.readme.io/docs/error-catalog) for common error codes and solutions
+- [**Create payments**](https://transactionify-th.readme.io/reference/createpayment) for the user. 
+- [**Check the balance**](https://transactionify-th.readme.io/reference/getbalance) of the user. 
+- [**List transactions**](https://transactionify-th.readme.io/reference/listtransactions) for the user. 
+
+It's possible you'll encounter errors while using Transactionify. See the [Error Catalog](https://transactionify-th.readme.io/docs/error-catalog) for common failure modes, errors, and solutions. 
 

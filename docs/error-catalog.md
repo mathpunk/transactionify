@@ -1,7 +1,7 @@
 ---
 title: Error Catalog
 category:
-  uri: getting-started
+  uri: api-guide
 content:
   excerpt: Learn about common error codes and messages you might receive
 ---
