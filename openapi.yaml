@@ -38,10 +38,7 @@ paths:
       tags:
         - Accounts
       summary: Create a new account
-      description: |
-        Creates a new account for the authenticated user with the specified currency. The account starts with a zero balance.
-
-        ⚠️ **Known Issue:** Response schema in this specification does not match actual API behavior. The actual response returns `{id, currency}` instead of `{id, balance}`. See ISSUES.md for details and reproduction steps.
+      description: Creates a new account for the authenticated user with the specified currency. The account starts with a zero balance.
       operationId: createAccount
       requestBody:
         required: true
@@ -110,10 +107,7 @@ paths:
       tags:
         - Payments
       summary: Create a new payment
-      description: |
-        Creates a new payment for the specified account. The payment currency must match the account currency.
-
-        ⚠️ **Known Issue:** Response schema is incomplete. The actual API response includes a `timestamp` field (ISO-8601 format) that is not documented in this specification. See ISSUES.md for details.
+      description: Creates a new payment for the specified account. The payment currency must match the account currency.
       operationId: createPayment
       parameters:
         - $ref: '#/components/parameters/AccountId'
