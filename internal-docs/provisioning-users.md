@@ -15,7 +15,9 @@ In this guide, we'll assume you're creating a new client user from the command l
 - **Region set to us-east-1** (our production region)
   - Set via `aws configure`, or
   - Set via environment variable: `export AWS_DEFAULT_REGION=us-east-1`
-- **[TODO: IAM permissions - appropriate permissions to invoke Lambda functions]**
+
+NOTE: Your credentials must have `lambda:InvokeFunction` permission for the `transactionify-provisioning` function. How this permission is granted depends on how we handle IAM setup -- it may be attached directly to your IAM User, or you may need to assume an IAM Role. **[Investigate: Who should engineers contact for IAM permissions -- DevOps? A specific engineering manager?]**
+
 
 ## Procedure
 
