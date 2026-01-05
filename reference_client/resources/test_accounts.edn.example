@@ -1,0 +1,5 @@
+;; This file is auto-generated during rate limiting tests.
+;; It stores account IDs created for testing purposes.
+{:accounts []
+ :created-at nil
+ :count 0}

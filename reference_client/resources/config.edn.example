@@ -1,0 +1,3 @@
+{:api {:base-url "https://gj7edrv1il.execute-api.us-east-1.amazonaws.com"
+       :api-key "YOUR_API_KEY_HERE"
+       :test-account-id "YOUR_TEST_ACCOUNT_ID"}}

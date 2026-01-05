@@ -37,3 +37,11 @@ node_modules/
 # OS
 .DS_Store
 Thumbs.db
+
+# Clojure / reference_client
+reference_client/.clj-kondo/
+reference_client/.cpcache/
+reference_client/.lsp/
+reference_client/.nrepl-port
+reference_client/resources/config.edn
+reference_client/resources/test_accounts.edn
