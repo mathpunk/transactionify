@@ -1,0 +1,221 @@
+{
+	"info": {
+		"_postman_id": "transactionify-api-v1",
+		"name": "Transactionify API",
+		"description": "API collection for Transactionify - Payment and account management API.\n\n## Setup\n\nSet these variables before running:\n- `base_url`: https://gj7edrv1il.execute-api.us-east-1.amazonaws.com\n- `api_key`: Your API key\n\n## Workflow\n\n1. Run **Create Account** first — this returns an account `id`\n2. Copy that `id` into the `account_id` variable\n3. Now the other requests will work\n\nFor pagination: copy `next_cursor` from a response into the `next_cursor` variable to fetch subsequent pages.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Account",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "APIKey {{api_key}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"currency\": \"USD\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/v1/accounts",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"accounts"
+					]
+				},
+				"description": "Creates a new account with the specified currency (USD, EUR, or GBP). Account starts with zero balance."
+			}
+		},
+		{
+			"name": "Create Payment",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "APIKey {{api_key}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"amount\": {\n    \"value\": \"100.50\",\n    \"currency\": \"USD\"\n  }\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/v1/accounts/{{account_id}}/payments",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"accounts",
+						"{{account_id}}",
+						"payments"
+					]
+				},
+				"description": "Creates a payment for the specified account. Requires account_id variable to be set."
+			}
+		},
+		{
+			"name": "Get Account Balance",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "APIKey {{api_key}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/v1/accounts/{{account_id}}/balance",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"accounts",
+						"{{account_id}}",
+						"balance"
+					]
+				},
+				"description": "Retrieves the current balance for the specified account."
+			}
+		},
+		{
+			"name": "List Transactions",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "APIKey {{api_key}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/v1/accounts/{{account_id}}/transactions",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"accounts",
+						"{{account_id}}",
+						"transactions"
+					]
+				},
+				"description": "Lists all transactions for the specified account. Supports pagination with limit and cursor parameters."
+			}
+		},
+		{
+			"name": "List Transactions with Limit",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "APIKey {{api_key}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/v1/accounts/{{account_id}}/transactions?limit=3",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"accounts",
+						"{{account_id}}",
+						"transactions"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "3",
+							"description": "Maximum number of transactions to return per page"
+						}
+					]
+				},
+				"description": "Demonstrates pagination using the limit parameter. Returns a maximum of 3 transactions and includes a next_cursor if more results are available (has_more: true)."
+			}
+		},
+		{
+			"name": "List Transactions with Cursor",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "APIKey {{api_key}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/v1/accounts/{{account_id}}/transactions?limit=3&cursor={{next_cursor}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"accounts",
+						"{{account_id}}",
+						"transactions"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "3",
+							"description": "Maximum number of transactions to return per page"
+						},
+						{
+							"key": "cursor",
+							"value": "{{next_cursor}}",
+							"description": "Cursor from previous response's next_cursor field to retrieve the next page"
+						}
+					]
+				},
+				"description": "Demonstrates cursor-based pagination. Use the next_cursor value from a previous response to retrieve the next page of results. The cursor is an opaque base64-encoded token that maintains pagination state."
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "api_key",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "account_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "next_cursor",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
