@@ -8,6 +8,15 @@
 
 This project demonstrates a "centaur" methodology - a collaborative approach between human expertise and AI assistance. The goal is to leverage AI capabilities while maintaining human oversight, quality control, and ethical consideration throughout the documentation process.
 
+## Quality & Ethics Commitments
+
+- **Transparency**: Document all AI contributions clearly
+- **Human Oversight**: CANDIDATE maintains final review and approval of all outputs
+- **Quality Control**: Use AI for acceleration, not replacement of critical thinking
+- **Incremental Progress**: Work methodically to ensure comprehension and quality
+- **Skill Development**: Use this process to demonstrate both technical writing expertise and effective AI collaboration
+
+
 ## Process Log
 
 ### Session 1: Setup & Planning
@@ -909,13 +918,129 @@ To create your first customer account, ...
 
 **Committed as:** "docs: complete Quickstart guide with auth check and first account creation"
 
-## Quality & Ethics Commitments
+### Session 12: Internal Documentation (First Pass)
 
-- **Transparency**: Document all AI contributions clearly
-- **Human Oversight**: CANDIDATE maintains final review and approval of all outputs
-- **Quality Control**: Use AI for acceleration, not replacement of critical thinking
-- **Incremental Progress**: Work methodically to ensure comprehension and quality
-- **Skill Development**: Use this process to demonstrate both technical writing expertise and effective AI collaboration
+**Started:** 2026-01-04 (continued after Quickstart completion)
+
+**Objective:** Write internal-facing guide "How to Enroll New Users" for LoanPro backend engineers
+
+**Context:**
+- Challenge requirement: Internal documentation explaining how to provision new client users via AWS Lambda
+- Audience: New LoanPro backend engineer (may be junior)
+- This was the toughest challenge for CANDIDATE, as they have only the barest familiarity with AWS Lambda
+- Unlike the live API, there was not an obvious black-box, empirical approach
+
+**Strategy Employed:**
+
+1. Clarify terminology (customer users vs client users - addressing polysemy in the word "user")
+2. Consider how the Lambda is likely to be called (command line, automation; AWS Console mentioned, but we decided it was out of scope)
+3. Ask clarifying questions of AGENT about Lambda mechanics 
+4. Just write clearly as possible; when you can't write clearly, then you're confused about more things. 
+
+**Testing:**
+Ran unit tests to understand expected behavior:
+Result: ✅ 6 tests passed, revealing auto-generation behavior, UUIDv7 requirement, error handling
+
+**Key Discovery: Function Name Discrepancy**
+
+Midway through the process, AGENT and CANDIDATE discovered what looked like a discrepancy between the documented and coded Lambda name:
+
+- **Python docstring** (`src/python/transactionify/handlers/provisioning/main.py:28`): `--function-name provisioning`
+- **CDK infrastructure** (`lib/transactionify-stack.ts`): `functionName: '${stackName}-provisioning'`
+
+Added [TODO] markers in documentation for function name and IAM permissions. Focused investigation to tease out more information.
+
+**File Created:** `internal-docs/provisioning-users.md` (first draft with [TODO] markers)
+
+### Session 13: CDK Investigation and Function Name Fix
+
+**Started:** 2026-01-05
+
+**Objective:** Resolve function name [TODO] from Session 12
+
+CANDIDATE asked AGENT to explain CDK (AWS Cloud Development Kit) and identify the IaC files in the repo:
+- `cdk.json` — configuration
+- `bin/transactionify.ts` — app entry point (defines stack name)
+- `lib/transactionify-stack.ts` — infrastructure definitions
+
+**Finding:** In `bin/transactionify.ts` line 7:
+```typescript
+new TransactionifyStack(app, 'transactionify', {
+```
+
+Stack name is `transactionify`, so Lambda function name is `transactionify-provisioning`.
+
+**Action taken:** Fixed incorrect docstring in `src/python/transactionify/handlers/provisioning/main.py` and updated internal docs.
+
+**Committed as:** "fix: correct Lambda function name to transactionify-provisioning"
+
+### Session 14: IAM Permissions Discussion
+
+**Started:** 2026-01-05
+
+**Objective:** Address IAM permissions [TODO] from Session 12
+
+CANDIDATE and AGENT discussed how IAM Users vs IAM Roles relate to granting `lambda:InvokeFunction` permission:
+- **IAM Users:** Identity with long-lived credentials (access key + secret)
+- **IAM Roles:** Permissions that can be assumed; temporary credentials
+
+For a human running CLI commands, either approach is valid depending on org setup. Without knowledge of LoanPro's specific IAM practices, left an **[Investigate]** marker in docs acknowledging the org-specific nature.
+
+**Updated:** `internal-docs/provisioning-users.md` — IAM note added with investigate marker
+
+### Session 15: Postman Collection Final Review
+
+**Started:** 2026-01-05
+
+**Objective:** Validate Postman collection before final commit
+
+Ran Newman to validate all 6 requests work:
+```bash
+newman run Transactionify_API.postman_collection.json --env-var "base_url=..." --env-var "api_key=..." --env-var "account_id=..."
+```
+Result: ✅ 6/6 requests passed (200 OK)
+
+**Discussion:** CANDIDATE asked about documenting the expected workflow (run Create Account first, copy the returned ID into account_id variable, then run other requests). AGENT confirmed this is standard Postman usage.
+
+**Action:** Added Setup and Workflow instructions to collection description explaining:
+- Which variables to set
+- Run Create Account first to get an account_id
+- Copy next_cursor for pagination
+
+### Session 16: Settlement Investigation (48-Hour Follow-up)
+
+**Started:** 2026-01-05
+
+**Objective:** Investigate whether payments from 2026-01-03 have settled
+
+**Approach:** Used reference_client to check balance and transaction status after 48+ hours.
+
+**Findings:**
+
+1. **Balance still $0.00** — No change after 48 hours
+2. **Payment ID = Transaction ID** — Same entity, confirmed by matching UUIDs
+3. **Status field discrepancy:**
+   - POST /payments response: `status: "pending"`
+   - GET /transactions response: no status field
+
+**CANDIDATE insight:** Asked whether this was stateful vs event-sourced architecture. Transactions are recorded (events exist), but balance isn't derived from them.
+
+**Code Analysis:**
+
+Examined `payment.py` and `balance.py`:
+- `payment.py`: Creates transaction with `status: 'pending'`, does NOT update BALANCE record
+- `balance.py`: Reads stored BALANCE record directly, does NOT compute from transactions
+- No settlement service exists in repository
+
+**OpenAPI Spec Analysis:**
+
+Used `clj-yaml` to parse schemas:
+- `Payment.status`: `enum: ["pending"]` — only value allowed
+- `Transaction`: no status property defined
+
+**Conclusion:** OpenAPI spec is **accurate** — it correctly documents an incomplete implementation. Settlement simply isn't implemented; the spec honestly reflects this by only allowing `"pending"` status.
+
+**Updated:** ISSUES.md Issue #2 with root cause analysis and architectural findings
 
 ---
 
