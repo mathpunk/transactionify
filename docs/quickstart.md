@@ -3,7 +3,7 @@ title: Quickstart
 category:
   uri: getting-started
 content:
-  excerpt: Learn to make your first successful API call
+  excerpt: Learn to connect, authenticate, and create user accounts in Transactionify. 
 ---
 
 # Quickstart

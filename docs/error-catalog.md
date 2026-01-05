@@ -3,12 +3,12 @@ title: Error Catalog
 category:
   uri: api-guide
 content:
-  excerpt: Learn about common error codes and messages you might receive
+  excerpt: Learn about errors, error messages, known issues, and common questions you might encounter. 
 ---
 
 # Error Catalog
 
-This guide documents the error responses you may encounter when using the Transactionify API.
+This guide documents common errors and sources of confusion you may have when using the Transactionify API.
 
 ## Common Error Responses
 
@@ -80,28 +80,13 @@ The API validates that all required fields are present in requests.
 
 **Common Scenarios:**
 - Creating a payment for a non-existent account
-- Checking balance for invalid account ID
-- Listing transactions for deleted or never-created account
+- Checking the balance for an invalid account ID
+- Listing transactions for a deleted or never-created account
 
 ## Known Issues
 
-⚠️ **Amount Validation Gap:** The API currently accepts non-numeric strings for payment amounts (e.g., `"not-a-number"`). This appears to be a validation bug. Until resolved, clients should validate amount values are numeric before sending requests.
+⚠️ **Amount Validation Gap:** The API currently accepts non-numeric strings for payment amounts. This is reasonable for passing currency values like `"105.25"` but doesn't make much sense for, e.g., `"not-a-number"`). Clients should validate amount values are numeric before sending requests. In the future, the API may do its own validation, and start rejecting non-numeric data.
 
-## Rate Limiting
-
-**Current Status:** No rate limiting observed during testing (5000+ concurrent requests succeeded).
-
-For high-throughput applications (>5000 concurrent requests), contact the engineering team to discuss your requirements and ensure optimal performance.
-
-## Error Response Format
-
-All error responses follow this JSON structure:
-
-```json
-{
-  "message": "Description of the error"
-}
-```
 
 ## Common Questions
 
@@ -109,9 +94,9 @@ All error responses follow this JSON structure:
 
 Payments are created with status `"pending"`. Balance updates are processed separately and may not reflect recent payment activity immediately.
 
+
 ## Getting Help
 
 If you encounter errors not listed here or need clarification:
-1. Check the API Reference for endpoint-specific requirements
-2. See ISSUES.md in the repository for known issues and workarounds
-3. Contact the API support team with your request details and error response
+1. Check the [API Reference](https://transactionify-th.readme.io/reference) for endpoint-specific requirements.
+2. Contact the API support team with your request details and error response.

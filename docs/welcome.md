@@ -3,7 +3,7 @@ title: Welcome to Transactionify!
 category:
   uri: getting-started
 content:
-  excerpt: Welcome to the Transactionify API
+  excerpt: Welcome to the Transactionify API!
 ---
 
 <Cards>
