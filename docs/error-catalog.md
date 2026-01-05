@@ -103,6 +103,12 @@ All error responses follow this JSON structure:
 }
 ```
 
+## Common Questions
+
+### Why is my balance still $0.00 after creating payments?
+
+Payments are created with status `"pending"`. Balance updates are processed separately and may not reflect recent payment activity immediately.
+
 ## Getting Help
 
 If you encounter errors not listed here or need clarification:
