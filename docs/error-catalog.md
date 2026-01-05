@@ -1,18 +1,111 @@
 ---
 title: Error Catalog
 category:
-  uri: uri-that-does-not-map-to-getting-started
+  uri: getting-started
 content:
   excerpt: Learn about common error codes and messages you might receive
 ---
 
 # Error Catalog
 
+This guide documents the error responses you may encounter when using the Transactionify API.
+
+## Common Error Responses
+
+| Status Code | Error Type | Message | When This Occurs |
+|-------------|------------|---------|------------------|
+| **400** | Bad Request | "Missing required field: currency" | Creating an account without specifying currency |
+| **400** | Bad Request | "Invalid currency. Allowed values: USD, EUR, GBP" | Attempting to use unsupported currency (e.g., JPY, CAD) |
+| **400** | Bad Request | "Missing required field: amount" | Creating a payment without specifying amount |
+| **400** | Bad Request | "Invalid pagination cursor" | Using an invalid or expired cursor for transaction pagination |
+| **403** | Forbidden | "Forbidden" | Invalid or missing API key in Authorization header |
+| **404** | Not Found | "Account not found" | Attempting operations on non-existent account ID |
+| **500** | Internal Server Error | "An error occurred while processing your request" | Unexpected server-side error |
+
 ## Authentication Errors
+
+### 403 Forbidden
+
+**Cause:** Invalid or missing API key
+
+**Example Request:**
+```bash
+curl -X POST https://gj7edrv1il.execute-api.us-east-1.amazonaws.com/api/v1/accounts \
+  -H "Authorization: APIKey wrong-key-12345" \
+  -H "Content-Type: application/json" \
+  -d '{"currency": "USD"}'
+```
+
+**Response:**
+```json
+{
+  "message": "Forbidden"
+}
+```
+
+**How to Fix:** Verify your API key is correct and properly formatted in the Authorization header as `APIKey <your-key>`.
 
 ## Validation Errors
 
-## Currencies Accepted
+### Missing Required Fields
 
-## Performance & Rate Limiting
+**Status:** 400 Bad Request
 
+The API validates that all required fields are present in requests.
+
+**Common Examples:**
+- Creating account without `currency`: `"Missing required field: currency"`
+- Creating payment without `amount`: `"Missing required field: amount"`
+
+### Invalid Currency
+
+**Status:** 400 Bad Request
+**Message:** `"Invalid currency. Allowed values: USD, EUR, GBP"`
+
+**Cause:** Attempting to use a currency not supported by the API.
+
+**Supported Currencies:**
+- USD (US Dollar)
+- EUR (Euro)
+- GBP (British Pound)
+
+**Note:** The API rejects all other currency codes, including valid ISO currencies like JPY or CAD.
+
+### Account Not Found
+
+**Status:** 404 Not Found
+**Message:** `"Account not found"`
+
+**Cause:** Attempting to access an account that doesn't exist or using an invalid account ID format.
+
+**Common Scenarios:**
+- Creating a payment for a non-existent account
+- Checking balance for invalid account ID
+- Listing transactions for deleted or never-created account
+
+## Known Issues
+
+⚠️ **Amount Validation Gap:** The API currently accepts non-numeric strings for payment amounts (e.g., `"not-a-number"`). This appears to be a validation bug. Until resolved, clients should validate amount values are numeric before sending requests.
+
+## Rate Limiting
+
+**Current Status:** No rate limiting observed during testing (5000+ concurrent requests succeeded).
+
+For high-throughput applications (>5000 concurrent requests), contact the engineering team to discuss your requirements and ensure optimal performance.
+
+## Error Response Format
+
+All error responses follow this JSON structure:
+
+```json
+{
+  "message": "Description of the error"
+}
+```
+
+## Getting Help
+
+If you encounter errors not listed here or need clarification:
+1. Check the API Reference for endpoint-specific requirements
+2. See ISSUES.md in the repository for known issues and workarounds
+3. Contact the API support team with your request details and error response
