@@ -25,7 +25,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         Response with generated API key and user_id
 
     Example invocation:
-        aws lambda invoke --function-name provisioning \\
+        aws lambda invoke --function-name transactionify-provisioning \\
             --payload '{"user_id": "019a4757-c049-7ea8-a110-2ea110c5a6f7"}' \\
             output.json
     """

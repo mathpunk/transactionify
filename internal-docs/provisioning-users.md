@@ -19,13 +19,13 @@ In this guide, we'll assume you're creating a new client user from the command l
 
 ## Procedure
 
-To invoke the provisioning function, you'll need to reference the function name (**[TODO: confirm actual function name - may be `provisioning` or `{stack}-provisioning`]**), provide a payload (possibly empty), and specify the filename where the response should be written (e.g., `output.json`).
+To invoke the provisioning function, you'll need to reference the function name (`transactionify-provisioning`), provide a payload (possibly empty), and specify the filename where the response should be written (e.g., `output.json`).
 
 **Basic invocation (auto-generate user_id):**
 
 ```bash
 aws lambda invoke \
-    --function-name provisioning \
+    --function-name transactionify-provisioning \
     --payload '{}' \
     output.json
 ```
@@ -34,7 +34,7 @@ aws lambda invoke \
 
 ```bash
 aws lambda invoke \
-    --function-name provisioning \
+    --function-name transactionify-provisioning \
     --payload '{"user_id": "019a4757-c049-7ea8-a110-2ea110c5a6f7"}' \
     output.json
 ```
